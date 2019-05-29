@@ -43,4 +43,13 @@ public class VideoInfo implements Parcelable {
         dest.writeString(path);
         dest.writeLong(duration);
     }
+
+    @Override
+    public String toString() {
+        return "VideoInfo{" +
+                "name='" + name + '\'' +
+                ", path='" + path + '\'' +
+                ", duration=" + duration +
+                '}';
+    }
 }

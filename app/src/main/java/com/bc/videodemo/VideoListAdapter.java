@@ -32,9 +32,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VideoHolder videoHolder, int i) {
-        int adapterPosition = videoHolder.getAdapterPosition();
-        VideoInfo videoInfo = data.get(adapterPosition);
+    public void onBindViewHolder(@NonNull VideoHolder videoHolder, int position) {
+//        int adapterPosition = videoHolder.getAdapterPosition();
+        VideoInfo videoInfo = data.get(position);
+//        LogUtils.i(TAG," data :    "+videoInfo.toString());
         videoHolder.bind(videoInfo);
     }
 
@@ -51,12 +52,14 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoHolder> {
     @Override
     public void onViewRecycled(@NonNull VideoHolder holder) {
         super.onViewRecycled(holder);
+        holder.releasePlayer();
+//        LogUtils.i(TAG," on view recycled "+holder.getAdapterPosition());
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        LogUtils.i(TAG,"  attach to rv ");
+//        LogUtils.i(TAG,"  attach to rv ");
     }
 
     @Override
@@ -69,13 +72,13 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoHolder> {
     @Override
     public void onViewAttachedToWindow(@NonNull VideoHolder holder) {
         super.onViewAttachedToWindow(holder);
-        LogUtils.i(TAG," attach to window :"+holder.getAdapterPosition());
+//        LogUtils.i(TAG," attach to window :"+holder.getAdapterPosition());
     }
 
     @Override
     public void onViewDetachedFromWindow(@NonNull VideoHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        LogUtils.i(TAG," detach from window :"+holder.getAdapterPosition());
+//        LogUtils.i(TAG," detach from window :"+holder.getAdapterPosition());
 
     }
 

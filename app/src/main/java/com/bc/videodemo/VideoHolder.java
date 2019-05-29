@@ -3,6 +3,13 @@ package com.bc.videodemo;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.GenericLifecycleObserver;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
@@ -15,42 +22,34 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackPreparer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.database.ExoDatabaseProvider;
-import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
 import java.io.File;
 
+
+/**
+ *
+ */
 public class VideoHolder extends RecyclerView.ViewHolder {
 
 
     public static final String TAG = "VideoHolder";
 
-    PlayerView playerView;
+    private PlayerView playerView;
 
     private VideoInfo videoInfo;
     private MediaSource mediaSource;
-    private LoopingMediaSource loopingMediaSource;
+    // fixme cause oom
+//    private LoopingMediaSource loopingMediaSource;
     private Uri uri;
-//    private File cacheDir ;
 
-    // fixme  Pending exception java.lang.IllegalStateException:
-    //  Another SimpleCache instance uses the folder: /data/user/0/com.bc.videodemo/cache
-//    private SimpleCache simpleCache;
     private CacheDataSourceFactory cacheDataSourceFactory;
-//    private DefaultDataSourceFactory upstreamFactory;
 
     private TrackSelection.Factory trackSelectionFactory;
     private DefaultRenderersFactory renderersFactory;
@@ -76,36 +75,38 @@ public class VideoHolder extends RecyclerView.ViewHolder {
 
 
     private void initPlayer() {
-        if (trackSelectionFactory==null) {
+        if (trackSelectionFactory == null) {
             trackSelectionFactory = new AdaptiveTrackSelection.Factory();
         }
-        if (renderersFactory==null) {
+        if (renderersFactory == null) {
             renderersFactory = new DefaultRenderersFactory(context);
         }
-        if (trackSelector==null) {
+        if (trackSelector == null) {
             trackSelector = new DefaultTrackSelector(trackSelectionFactory);
         }
-        if (parameters==null) {
+        if (parameters == null) {
             parameters =
                     new DefaultTrackSelector.ParametersBuilder().build();
         }
         trackSelector.setParameters(parameters);
 
-        if (player==null) {
+        if (player == null) {
 
             player = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector);
 
             player.addListener(new Player.EventListener() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    if (playbackState==Player.STATE_ENDED){
-                        playerView.onResume();
+                    LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
+                            + ", playbackstate :" + playbackState);
+                    if (playbackState == Player.STATE_ENDED) {
+
                     }
                 }
 
                 @Override
                 public void onPlayerError(ExoPlaybackException error) {
-                    ToastUtils.showShort("player error :"+error.getMessage());
+                    ToastUtils.showShort("player error :" + error.getMessage());
                 }
             });
         }
@@ -115,12 +116,12 @@ public class VideoHolder extends RecyclerView.ViewHolder {
 
         cacheDataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
 
-        if (uri==null){
+        if (uri == null) {
             uri = Uri.fromFile(new File(videoInfo.path));
 
         }
 
-        if (mediaSource==null){
+        if (mediaSource == null) {
             mediaSource =
                     new ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(uri);
         }
@@ -129,7 +130,7 @@ public class VideoHolder extends RecyclerView.ViewHolder {
 //            loopingMediaSource = new LoopingMediaSource(mediaSource);
 //        }
 
-        if (player!=null){
+        if (player != null) {
             player.prepare(mediaSource, false, false);
 
         }
@@ -151,14 +152,28 @@ public class VideoHolder extends RecyclerView.ViewHolder {
     public void releasePlayer() {
         player.release();
         player = null;
+        releaseMediaSource();
+    }
+
+    private void releaseMediaSource(){
+//        loopingMediaSource = null;
+        mediaSource = null;
+        uri = null;
     }
 
     public void pause() {
-        LogUtils.i(TAG," pause play in position :"+getAdapterPosition());
+        LogUtils.i(TAG, " pause play in position :" + getAdapterPosition());
         playerView.onPause();
         if (player != null) {
             player.setPlayWhenReady(false);
         }
+    }
+
+    public int getPlaybackState(){
+        if (player!=null){
+            return player.getPlaybackState();
+        }
+        return 0;
     }
 
     public void resume() {

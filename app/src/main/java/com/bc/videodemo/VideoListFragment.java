@@ -1,6 +1,7 @@
 package com.bc.videodemo;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,13 +17,13 @@ import com.blankj.utilcode.util.LogUtils;
 
 import java.util.ArrayList;
 
-public class VideoListFragment extends Fragment {
+public class VideoListFragment extends Fragment  {
 
     public static final String TAG = "VideoListFragment";
 
     private ArrayList<VideoInfo> videoInfos = new ArrayList<>();
 
-    private RecyclerView videoRv ;
+    private RecyclerView videoRv;
 
     private VideoListAdapter videoListAdapter = new VideoListAdapter();
 
@@ -36,59 +37,56 @@ public class VideoListFragment extends Fragment {
         videoListAdapter.notifyDataSetChanged();
     }
 
-    public static VideoListFragment getInstance(){
+    public static VideoListFragment getInstance() {
         return new VideoListFragment();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
 
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        LogUtils.i(TAG," setUserVisibleHint  :  "+isVisibleToUser);
-        if (isVisibleToUser){
-
-        }else {
-
+    public void pauseOrPlay(boolean isVisibleToUser) {
+        int po = layoutManager.findLastCompletelyVisibleItemPosition();
+        VideoHolder videoHolder = (VideoHolder) videoRv.findViewHolderForLayoutPosition(po);
+        if (isVisibleToUser) {
+            if (videoHolder != null) {
+                videoHolder.play();
+            }
+        } else {
+            if (videoHolder != null) {
+                videoHolder.pause();
+            }
         }
     }
+
 
     @Override
     public void onPause() {
         super.onPause();
-        LogUtils.i(TAG," on pause  ");
+        LogUtils.i(TAG,"onPause ");
+        pauseOrPlay(false);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        LogUtils.i(TAG," on stop  ");
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        LogUtils.i(TAG," on resume   ");
+        LogUtils.i(TAG,"onResume ");
+        pauseOrPlay(true);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments()!=null){
+        LogUtils.i(TAG,"onCreate ");
+        if (getArguments() != null) {
             videoInfos = getArguments().getParcelableArrayList(MeUtils.DATA_TAG);
         }
-        layoutManager = new ViewPagerLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL,false);
+        layoutManager = new ViewPagerLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
         layoutManager.setOnViewPagerListener(pagerListener);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_video_list,container,false);
+        View view = inflater.inflate(R.layout.fragment_video_list, container, false);
         videoRv = view.findViewById(R.id.video_rv);
         videoRv.setLayoutManager(layoutManager);
         videoRv.setAdapter(videoListAdapter);
@@ -111,7 +109,7 @@ public class VideoListFragment extends Fragment {
 
         @Override
         public void onPageScrollStateChanged(int state) {
-            if (state== ViewPager.SCROLL_STATE_IDLE){
+            if (state == ViewPager.SCROLL_STATE_IDLE) {
 
             }
         }

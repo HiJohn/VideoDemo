@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.blankj.utilcode.constant.PermissionConstants;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.exoplayer2.util.Util;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String TAG = "MainActivity";
 
     ViewPager viewPager ;
 
@@ -44,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             // pause all player
-
+            LogUtils.i(TAG," onPageSelected :"+position);
+            pagerAdapter.dispatchPageSelectedEvent(position);
         }
 
         @Override
