@@ -3,13 +3,6 @@ package com.bc.videodemo;
 import android.content.Context;
 import android.net.Uri;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.GenericLifecycleObserver;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
@@ -22,6 +15,7 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackPreparer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -46,7 +40,7 @@ public class VideoHolder extends RecyclerView.ViewHolder {
     private VideoInfo videoInfo;
     private MediaSource mediaSource;
     // fixme cause oom
-//    private LoopingMediaSource loopingMediaSource;
+    private LoopingMediaSource loopingMediaSource;
     private Uri uri;
 
     private CacheDataSourceFactory cacheDataSourceFactory;
