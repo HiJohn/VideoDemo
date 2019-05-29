@@ -48,7 +48,8 @@ public class VideoGridFragment extends Fragment implements OnGridItemClickListen
 
     @Override
     public void onItemClick(VideoInfo videoInfo, VideoGridAdapter.GridHolder holder) {
-        Intent intent = new Intent(this.getActivity(),VideoPlayActivity.class);
+//        Intent intent = new Intent(this.getActivity(),VideoPlayActivity.class);
+        Intent intent = new Intent(this.getActivity(),MePlayerViewActivity.class);
         intent.putExtra(MeUtils.VIDEO_INFO_TAG,videoInfo);
         startActivity(intent);
     }

@@ -16,8 +16,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".VideoPlayActivity"
+            android:name=".MePlayerViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/PicFullScreen">
+
+        </activity>
+        <activity
+            android:name=".VideoPlayActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/PicFullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -69,7 +69,9 @@ public class VideoListFragment extends Fragment  {
     public void onResume() {
         super.onResume();
         LogUtils.i(TAG,"onResume ");
-        pauseOrPlay(true);
+        if (getUserVisibleHint()) {
+            pauseOrPlay(true);
+        }
     }
 
     @Override

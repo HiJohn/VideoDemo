@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -23,10 +24,38 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.io.File;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 public class VideoPlayActivity extends AppCompatActivity {
 
     public static final String TAG = "VideoPlayActivity";
+
+    // Saved instance state keys.
+    private static final String KEY_TRACK_SELECTOR_PARAMETERS = "track_selector_parameters";
+    private static final String KEY_WINDOW = "window";
+    private static final String KEY_POSITION = "position";
+    private static final String KEY_AUTO_PLAY = "auto_play";
+
+    private boolean startAutoPlay;
+    private int startWindow;
+    private long startPosition;
+
+
+    private static final CookieManager DEFAULT_COOKIE_MANAGER;
+
+    static {
+        DEFAULT_COOKIE_MANAGER = new CookieManager();
+        DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+    }
+
+
+
+    private DefaultTrackSelector.Parameters trackSelectorParameters;
+    private TrackSelection.Factory trackSelectionFactory;
+    private DefaultRenderersFactory renderersFactory;
+    private  DefaultTrackSelector trackSelector;
 
     private SimpleExoPlayer player;
     private PlayerView playerView;
@@ -36,6 +65,10 @@ public class VideoPlayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
+            CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
+        }
+
         setContentView(R.layout.activity_video_play);
 
         if (getIntent()!=null){
@@ -46,6 +79,16 @@ public class VideoPlayActivity extends AppCompatActivity {
         }
 
         playerView = findViewById(R.id.act_play_view);
+
+        if (savedInstanceState != null) {
+            trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS);
+            startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY);
+            startWindow = savedInstanceState.getInt(KEY_WINDOW);
+            startPosition = savedInstanceState.getLong(KEY_POSITION);
+        } else {
+            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
+            clearStartPosition();
+        }
 
     }
 
@@ -66,7 +109,12 @@ public class VideoPlayActivity extends AppCompatActivity {
         Uri uri = Uri.fromFile(new File(videoInfo.path));
         mediaSource =
                 new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-        player.prepare(mediaSource);
+        boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+        if (haveStartPosition) {
+            player.seekTo(startWindow, startPosition);
+        }
+        player.setPlayWhenReady(startAutoPlay);
+        player.prepare(mediaSource,!haveStartPosition, false);
     }
 
     @Override
@@ -83,6 +131,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        LogUtils.i(TAG,"onResume ");
         if (Util.SDK_INT <= 23 || player == null) {
             initPlayer();
             if (playerView != null) {
@@ -93,20 +142,28 @@ public class VideoPlayActivity extends AppCompatActivity {
 
 
     private void initPlayer() {
-        TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory();
-        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this);
-        DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectionFactory);
-        DefaultTrackSelector.Parameters parameters =
-                new DefaultTrackSelector.ParametersBuilder().build();
-        trackSelector.setParameters(parameters);
+        if (trackSelectionFactory==null) {
+            trackSelectionFactory = new AdaptiveTrackSelection.Factory();
+        }
+        if (renderersFactory==null) {
+            renderersFactory = new DefaultRenderersFactory(this);
+        }
+        if (trackSelector==null) {
+            trackSelector = new DefaultTrackSelector(trackSelectionFactory);
+        }
+        if (trackSelectorParameters==null) {
+            trackSelectorParameters =
+                    new DefaultTrackSelector.ParametersBuilder().build();
+            trackSelector.setParameters(trackSelectorParameters);
+        }
         if (player == null) {
 
             player = ExoPlayerFactory.newSimpleInstance(this, renderersFactory, trackSelector);
             player.addListener(new Player.EventListener() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
-                            + ", playbackstate :" + playbackState);
+//                    LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
+//                            + ", playbackstate :" + playbackState);
                     if (playbackState == Player.STATE_ENDED) {
 
                     }
@@ -124,6 +181,54 @@ public class VideoPlayActivity extends AppCompatActivity {
         buildMediaSource();
     }
 
+    private void updateTrackSelectorParameters() {
+        if (trackSelector != null) {
+            trackSelectorParameters = trackSelector.getParameters();
+        }
+    }
+
+    private void updateStartPosition() {
+        if (player != null) {
+            startAutoPlay = player.getPlayWhenReady();
+            startWindow = player.getCurrentWindowIndex();
+            startPosition = Math.max(0, player.getContentPosition());
+        }
+    }
+
+    private void clearStartPosition() {
+        startAutoPlay = true;
+        startWindow = C.INDEX_UNSET;
+        startPosition = C.TIME_UNSET;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        updateTrackSelectorParameters();
+        updateStartPosition();
+        outState.putParcelable(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters);
+        outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay);
+        outState.putInt(KEY_WINDOW, startWindow);
+        outState.putLong(KEY_POSITION, startPosition);
+
+        LogUtils.i(TAG,"  onSaveInstanceState ");
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS);
+            startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY);
+            startWindow = savedInstanceState.getInt(KEY_WINDOW);
+            startPosition = savedInstanceState.getLong(KEY_POSITION);
+        } else {
+            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
+            clearStartPosition();
+        }
+        LogUtils.i(TAG,"  onRestoreInstanceState ");
+    }
 
     @Override
     public void onPause() {
@@ -154,8 +259,12 @@ public class VideoPlayActivity extends AppCompatActivity {
     }
 
     private void releasePlayer(){
-        player.release();
-        player = null;
-        mediaSource = null;
+        if (player!=null) {
+            updateTrackSelectorParameters();
+            updateStartPosition();
+            player.release();
+            player = null;
+            mediaSource = null;
+        }
     }
 }
