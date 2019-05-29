@@ -6,13 +6,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import java.util.ArrayList;
 
 public class VideoListFragment extends Fragment {
+
+    public static final String TAG = "VideoListFragment";
 
     private ArrayList<VideoInfo> videoInfos = new ArrayList<>();
 
@@ -40,6 +46,34 @@ public class VideoListFragment extends Fragment {
 
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        LogUtils.i(TAG," setUserVisibleHint  :  "+isVisibleToUser);
+        if (isVisibleToUser){
+
+        }else {
+
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LogUtils.i(TAG," on pause  ");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LogUtils.i(TAG," on stop  ");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogUtils.i(TAG," on resume   ");
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,12 +106,14 @@ public class VideoListFragment extends Fragment {
         @Override
         public void onPageSelected(View itemView, int position, boolean isBottom) {
             VideoHolder videoHolder = (VideoHolder) videoRv.getChildViewHolder(itemView);
-            videoHolder.play();
+            videoHolder.resume();
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
+            if (state== ViewPager.SCROLL_STATE_IDLE){
 
+            }
         }
     };
 

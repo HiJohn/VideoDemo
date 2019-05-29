@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import com.blankj.utilcode.util.LogUtils;
 
 import java.util.ArrayList;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoHolder> {
 
+    public static final String TAG = "VideoListAdapter";
 
     private ArrayList<VideoInfo> data = new ArrayList<>();
 
@@ -31,9 +33,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull VideoHolder videoHolder, int i) {
-        VideoInfo videoInfo = data.get(videoHolder.getAdapterPosition());
+        int adapterPosition = videoHolder.getAdapterPosition();
+        VideoInfo videoInfo = data.get(adapterPosition);
         videoHolder.bind(videoInfo);
-
     }
 
 
@@ -54,23 +56,27 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoHolder> {
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        LogUtils.i(TAG,"  attach to rv ");
     }
 
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
+        LogUtils.i(TAG,"  detach from rv ");
     }
 
     //=======================================================================================
     @Override
     public void onViewAttachedToWindow(@NonNull VideoHolder holder) {
         super.onViewAttachedToWindow(holder);
-
+        LogUtils.i(TAG," attach to window :"+holder.getAdapterPosition());
     }
 
     @Override
     public void onViewDetachedFromWindow(@NonNull VideoHolder holder) {
         super.onViewDetachedFromWindow(holder);
+        LogUtils.i(TAG," detach from window :"+holder.getAdapterPosition());
+
     }
 
     //=======================================================================================

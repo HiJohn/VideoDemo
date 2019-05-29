@@ -17,7 +17,7 @@ public class MeUtils {
 
         ArrayList<VideoInfo> videoInfos = new ArrayList<>();
 
-        VideoInfo videoInfo = new VideoInfo();
+        VideoInfo videoInfo ;
 
         Cursor cursor =
                 context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
@@ -26,6 +26,8 @@ public class MeUtils {
             if (cursor != null) {
                 cursor.moveToFirst();
                 do {
+
+                    videoInfo = new VideoInfo();
                     videoInfo.path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media
                             .DATA));
                     videoInfo.name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video

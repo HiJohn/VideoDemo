@@ -10,18 +10,15 @@ import java.util.ArrayList;
 public class MePagerAdapter extends FragmentStatePagerAdapter {
 
     private static String[] pagerTitle = {"list","grid"};
+    private VideoListFragment listFragment = VideoListFragment.getInstance();
+    private VideoGridFragment gridFragment = VideoGridFragment.getInstance();
+
 
     public MePagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    private ArrayList<VideoInfo> data = new ArrayList<>();
-
-    private VideoListFragment listFragment = VideoListFragment.getInstance();
-    private VideoGridFragment gridFragment = VideoGridFragment.getInstance();
-
     public void setData(ArrayList<VideoInfo> data) {
-        this.data = data;
         listFragment.setVideoInfos(data);
         gridFragment.setData(data);
     }
@@ -45,7 +42,7 @@ public class MePagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return pagerTitle.length;
     }
 
 
