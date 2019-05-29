@@ -10,6 +10,7 @@ public class MeUtils {
 
 
     public static final String DATA_TAG = "data";
+    public static final String VIDEO_INFO_TAG = "videoInfo";
     public static final String USER_AGENT = "christopher";
 
 

@@ -60,4 +60,9 @@ public class VideoApp extends Application {
     public CacheDataSourceFactory getCacheDataSourceFactory() {
         return cacheDataSourceFactory;
     }
+
+
+    public DefaultDataSourceFactory getUpstreamFactory(){
+        return upstreamFactory;
+    }
 }

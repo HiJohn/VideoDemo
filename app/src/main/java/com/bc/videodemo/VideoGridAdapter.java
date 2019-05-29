@@ -1,8 +1,10 @@
 package com.bc.videodemo;
 
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,15 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Grid
 
     private ArrayList<VideoInfo> videoInfos = new ArrayList<>();
 
-    public void setData(ArrayList<VideoInfo> data){
+    public void setData(ArrayList<VideoInfo> data) {
         videoInfos = data;
     }
 
+    private OnGridItemClickListener itemClickListener;
+
+    public void setItemClickListener(OnGridItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
 
     @NonNull
     @Override
@@ -29,18 +36,28 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Grid
 
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
-        View view = inflater.inflate(R.layout.item_grid_video,viewGroup,false);
+        View view = inflater.inflate(R.layout.item_grid_video, viewGroup, false);
 
 
         return new GridHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GridHolder gridHolder, int i) {
-        VideoInfo videoInfo = videoInfos.get(i);
+    public void onBindViewHolder(@NonNull final GridHolder gridHolder, int i) {
+        final VideoInfo videoInfo = videoInfos.get(i);
 
         Glide.with(gridHolder.imageView).load(Uri.fromFile(new File(videoInfo.path))).into(gridHolder
-        .imageView);
+                .imageView);
+
+
+        gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (itemClickListener!=null){
+                    itemClickListener.onItemClick(videoInfo,gridHolder);
+                }
+            }
+        });
     }
 
     @Override
@@ -48,7 +65,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Grid
         return videoInfos.size();
     }
 
-    class GridHolder extends RecyclerView.ViewHolder{
+    class GridHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
 

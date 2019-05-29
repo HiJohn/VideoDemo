@@ -1,5 +1,6 @@
 package com.bc.videodemo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,7 +13,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class VideoGridFragment extends Fragment {
+public class VideoGridFragment extends Fragment implements OnGridItemClickListener{
 
 
     private ArrayList<VideoInfo> data = new ArrayList<>();
@@ -41,7 +42,14 @@ public class VideoGridFragment extends Fragment {
         layoutManager = new GridLayoutManager(this.getContext(),3);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(gridAdapter);
-
+        gridAdapter.setItemClickListener(this);
         return view;
+    }
+
+    @Override
+    public void onItemClick(VideoInfo videoInfo, VideoGridAdapter.GridHolder holder) {
+        Intent intent = new Intent(this.getActivity(),VideoPlayActivity.class);
+        intent.putExtra(MeUtils.VIDEO_INFO_TAG,videoInfo);
+        startActivity(intent);
     }
 }
