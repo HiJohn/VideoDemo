@@ -94,7 +94,8 @@ public class VideoHolder extends RecyclerView.ViewHolder {
                     LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
                             + ", playbackstate :" + playbackState);
                     if (playbackState == Player.STATE_ENDED) {
-
+                        player.seekTo(0,0);
+                        playerView.onResume();
                     }
                 }
 

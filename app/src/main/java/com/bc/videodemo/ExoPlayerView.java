@@ -36,6 +36,7 @@ public class ExoPlayerView extends PlayerView {
     private TrackSelection.Factory trackSelectionFactory;
     private DefaultRenderersFactory renderersFactory;
     private DefaultTrackSelector trackSelector;
+    private CacheDataSourceFactory dataSourceFactory;
 
     public ExoPlayerView(Context context) {
         super(context);
@@ -81,6 +82,10 @@ public class ExoPlayerView extends PlayerView {
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 //                    LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
 //                            + ", playbackstate :" + playbackState);
+                    if (playbackState==Player.STATE_ENDED){
+                        player.seekTo(0,0);
+                        onResume();
+                    }
                 }
 
                 @Override
@@ -88,14 +93,14 @@ public class ExoPlayerView extends PlayerView {
                     ToastUtils.showShort("player error :" + error.getMessage());
                 }
             });
-            player.setPlayWhenReady(true);
+            player.setPlayWhenReady(startAutoPlay);
         }
         setPlayer(player);
         buildMediaSource();
     }
 
     public void buildMediaSource() {
-        CacheDataSourceFactory dataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
+        dataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
 //        DefaultDataSourceFactory defaultDataSourceFactory = VideoApp.getApp().getUpstreamFactory();
         mediaSource =
                 new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
@@ -103,7 +108,7 @@ public class ExoPlayerView extends PlayerView {
         if (haveStartPosition) {
             player.seekTo(startWindow, startPosition);
         }
-        player.prepare(mediaSource, false, false);
+        player.prepare(mediaSource, !haveStartPosition, false);
     }
 
 
@@ -190,6 +195,7 @@ public class ExoPlayerView extends PlayerView {
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
+        // not called
         LogUtils.i(TAG," onRestoreInstanceState ");
         super.onRestoreInstanceState(state);
         if (state==null){
