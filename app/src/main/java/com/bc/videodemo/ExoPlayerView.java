@@ -50,6 +50,12 @@ public class ExoPlayerView extends PlayerView {
         super(context, attrs, defStyleAttr);
     }
 
+//    private void init(){
+//        setControllerShowTimeoutMs(0);
+//        setControllerHideOnTouch(false);
+//    }
+
+
     public void setVideoUri(Uri uri) {
         this.uri = uri;
     }

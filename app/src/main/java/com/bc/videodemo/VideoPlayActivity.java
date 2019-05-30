@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -64,12 +66,15 @@ public class VideoPlayActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow()
+                .getDecorView()
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         super.onCreate(savedInstanceState);
         if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
             CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
         }
-
         setContentView(R.layout.activity_video_play);
+
 
         if (getIntent()!=null){
             videoInfo = getIntent().getParcelableExtra(MeUtils.VIDEO_INFO_TAG);
@@ -120,6 +125,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Util.SDK_INT > 23) {
             initPlayer();
             if (playerView != null) {
@@ -131,6 +137,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+
         LogUtils.i(TAG,"onResume ");
         if (Util.SDK_INT <= 23 || player == null) {
             initPlayer();
@@ -245,6 +252,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Util.SDK_INT > 23) {
             if (playerView != null) {
                 playerView.onPause();

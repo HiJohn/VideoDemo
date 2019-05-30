@@ -23,8 +23,8 @@
         </activity>
         <activity
             android:name=".VideoPlayActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:theme="@style/PicFullScreen">
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/FullScreenWithStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -32,7 +32,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/PicFullScreen">
+            android:theme="@style/FullScreenWithStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
