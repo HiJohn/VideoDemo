@@ -126,20 +126,11 @@ public class ExoPlayerView extends PlayerView {
         mediaSource = null;
     }
 
-    public void resume() {
-        initPlayer();
-        onResume();
-    }
-
-    public void pause() {
-        onPause();
-        releasePlayer();
-    }
-
     //==================================================================================================
     @Override
     public void onPause() {
         super.onPause();
+        releasePlayer();
         LogUtils.i(TAG, " onPause  ");
     }
 
@@ -147,6 +138,7 @@ public class ExoPlayerView extends PlayerView {
     @Override
     public void onResume() {
         super.onResume();
+        initPlayer();
         LogUtils.i(TAG, " onResume  ");
     }
 

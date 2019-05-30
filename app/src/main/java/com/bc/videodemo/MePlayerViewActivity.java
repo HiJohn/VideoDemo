@@ -40,13 +40,13 @@ public class MePlayerViewActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        playerView.resume();
+        playerView.onResume();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        playerView.pause();
+        playerView.onPause();
     }
 }
