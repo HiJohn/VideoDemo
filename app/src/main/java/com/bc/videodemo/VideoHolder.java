@@ -6,8 +6,8 @@ import android.net.Uri;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
+import android.view.ViewTreeObserver;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -62,6 +62,10 @@ public class VideoHolder extends RecyclerView.ViewHolder {
 
     public void bind(VideoInfo data) {
         this.videoInfo = data;
+        LogUtils.i(TAG," getAdapterPosition: "+getAdapterPosition());
+        LogUtils.i(TAG," is visible :"+itemView.getVisibility());
+
+        itemView.bringToFront();
         initPlayer();
         initPlayerView();
         buildMediaSource();
@@ -87,12 +91,12 @@ public class VideoHolder extends RecyclerView.ViewHolder {
         if (player == null) {
 
             player = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector);
-
+//            player.setRepeatMode(Player.REPEAT_MODE_ONE);
             player.addListener(new Player.EventListener() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
-                            + ", playbackstate :" + playbackState);
+//                    LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
+//                            + ", playbackstate :" + playbackState);
                     if (playbackState == Player.STATE_ENDED) {
                         player.seekTo(0,0);
                         playerView.onResume();
@@ -101,6 +105,7 @@ public class VideoHolder extends RecyclerView.ViewHolder {
 
                 @Override
                 public void onPlayerError(ExoPlaybackException error) {
+                    LogUtils.e(TAG," video info : "+videoInfo.toString());
                     ToastUtils.showShort("player error :" + error.getMessage());
                 }
             });
@@ -138,7 +143,7 @@ public class VideoHolder extends RecyclerView.ViewHolder {
         playerView.setPlaybackPreparer(new PlaybackPreparer() {
             @Override
             public void preparePlayback() {
-
+                player.retry();
             }
         });
 

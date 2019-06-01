@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 
 import androidx.annotation.Nullable;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -83,6 +82,7 @@ public class ExoPlayerView extends PlayerView {
 
         if (player == null) {
             player = ExoPlayerFactory.newSimpleInstance(getContext(), renderersFactory, trackSelector);
+//            player.setRepeatMode(Player.REPEAT_MODE_ONE);
             player.addListener(new Player.EventListener() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {

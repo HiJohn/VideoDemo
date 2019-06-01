@@ -7,11 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackPreparer;
 import com.google.android.exoplayer2.Player;
@@ -166,23 +163,8 @@ public class VideoPlayActivity extends AppCompatActivity {
         if (player == null) {
 
             player = ExoPlayerFactory.newSimpleInstance(this, renderersFactory, trackSelector);
-            player.addListener(new Player.EventListener() {
-                @Override
-                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-//                    LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
-//                            + ", playbackstate :" + playbackState);
-                    if (playbackState == Player.STATE_ENDED) {
-                        player.seekTo(0,0);
-                        playerView.onResume();
-                    }
-                }
-
-                @Override
-                public void onPlayerError(ExoPlaybackException error) {
-                    ToastUtils.showShort("player error :" + error.getMessage());
-                }
-            });
-            player.setPlayWhenReady(true);
+            player.setRepeatMode(Player.REPEAT_MODE_ONE);
+            player.setPlayWhenReady(startAutoPlay);
         }
 
         initPlayerView();

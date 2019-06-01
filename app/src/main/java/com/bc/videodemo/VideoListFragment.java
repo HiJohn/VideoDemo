@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.blankj.utilcode.util.LogUtils;
 
 import java.util.ArrayList;
 
@@ -71,6 +70,15 @@ public class VideoListFragment extends Fragment  {
         LogUtils.i(TAG,"onResume ");
         if (getUserVisibleHint()) {
             pauseOrPlay(true);
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        LogUtils.i(TAG," setUserVisibleHint: "+isVisibleToUser);
+        if (layoutManager!=null){
+            pauseOrPlay(isVisibleToUser);
         }
     }
 

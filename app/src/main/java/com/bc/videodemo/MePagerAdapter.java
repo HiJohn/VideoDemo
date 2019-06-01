@@ -31,11 +31,11 @@ public class MePagerAdapter extends FragmentStatePagerAdapter {
 
 
     public void dispatchPageSelectedEvent(int selectedPosition){
-        if (selectedPosition==0){
-            listFragment.pauseOrPlay(true);
-        }else if (selectedPosition==1){
-            listFragment.pauseOrPlay(false);
-        }
+//        if (selectedPosition==0){
+//            listFragment.pauseOrPlay(true);
+//        }else if (selectedPosition==1){
+//            listFragment.pauseOrPlay(false);
+//        }
     }
 
     @Override

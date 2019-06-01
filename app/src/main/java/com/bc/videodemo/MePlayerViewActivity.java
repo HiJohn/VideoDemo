@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Window;
 import android.view.WindowManager;
 
 import java.io.File;
