@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -13,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
+import com.blankj.utilcode.util.ToastUtils;
 
 import java.util.ArrayList;
 
@@ -113,8 +116,12 @@ public class VideoListFragment extends Fragment  {
 
         @Override
         public void onPageSelected(View itemView, int position, boolean isBottom) {
+
             VideoHolder videoHolder = (VideoHolder) videoRv.getChildViewHolder(itemView);
             videoHolder.resume();
+            mVideoName = videoHolder.getVideoName();
+
+            findRetain();
         }
 
         @Override
@@ -124,5 +131,28 @@ public class VideoListFragment extends Fragment  {
             }
         }
     };
+
+
+    private String mVideoName = "";
+
+    private void findRetain(){
+        FragmentManager fragmentManager = getFragmentManager();
+
+        if (fragmentManager!=null){
+//            RetainFragment retainFragment =
+//                    (RetainFragment) fragmentManager.findFragmentById(R.id.retain_fragment);
+//            if (retainFragment==null){
+//                retainFragment = (RetainFragment) fragmentManager.findFragmentByTag("retain");
+//            }
+            RetainFragment retainFragment = (RetainFragment) fragmentManager.findFragmentByTag("retain");
+
+            if (retainFragment!=null){
+                retainFragment.setMeVideoTag(mVideoName);
+            }else {
+                ToastUtils.showShort(" not find retain frag ");
+            }
+        }
+
+    }
 
 }

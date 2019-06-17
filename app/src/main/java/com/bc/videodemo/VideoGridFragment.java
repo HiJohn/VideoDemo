@@ -5,11 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.blankj.utilcode.util.ToastUtils;
 
 import java.util.ArrayList;
 
@@ -18,6 +22,7 @@ public class VideoGridFragment extends Fragment implements OnGridItemClickListen
 
     private ArrayList<VideoInfo> data = new ArrayList<>();
 
+    private TextView mTagTx;
 
     public void setData(ArrayList<VideoInfo> videoInfos) {
         this.data = videoInfos;
@@ -43,6 +48,7 @@ public class VideoGridFragment extends Fragment implements OnGridItemClickListen
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(gridAdapter);
         gridAdapter.setItemClickListener(this);
+        mTagTx = view.findViewById(R.id.meVideoTag);
         return view;
     }
 
@@ -53,4 +59,34 @@ public class VideoGridFragment extends Fragment implements OnGridItemClickListen
         intent.putExtra(MeUtils.VIDEO_INFO_TAG,videoInfo);
         startActivity(intent);
     }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser){
+            findRetain();
+        }
+    }
+
+    private void findRetain(){
+        FragmentManager fragmentManager = getFragmentManager();
+
+        if (fragmentManager!=null){
+            //            RetainFragment retainFragment =
+//                    (RetainFragment) fragmentManager.findFragmentById(R.id.retain_fragment);
+//            if (retainFragment==null){
+//                retainFragment = (RetainFragment) fragmentManager.findFragmentByTag("retain");
+//            }
+            RetainFragment retainFragment = (RetainFragment) fragmentManager.findFragmentByTag("retain");
+
+            if (retainFragment!=null){
+                mTagTx.setText(retainFragment.getMeVideoTag());
+            }else {
+                ToastUtils.showShort(" not find retain frag grid");
+            }
+        }
+
+    }
+
 }

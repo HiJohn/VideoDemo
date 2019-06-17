@@ -189,4 +189,11 @@ public class VideoHolder extends RecyclerView.ViewHolder {
             player.setPlayWhenReady(true);
         }
     }
+
+    public String getVideoName(){
+        if (videoInfo!=null){
+            return videoInfo.name;
+        }
+        return "";
+    }
 }

@@ -14,8 +14,11 @@ public class MePagerAdapter extends FragmentStatePagerAdapter {
     private VideoGridFragment gridFragment = VideoGridFragment.getInstance();
 
 
+    private FragmentManager fragmentManager;
+
     public MePagerAdapter(FragmentManager fm) {
         super(fm);
+        fragmentManager = fm;
     }
 
     public void setData(ArrayList<VideoInfo> data) {
@@ -36,6 +39,8 @@ public class MePagerAdapter extends FragmentStatePagerAdapter {
 //        }else if (selectedPosition==1){
 //            listFragment.pauseOrPlay(false);
 //        }
+
+
     }
 
     @Override
