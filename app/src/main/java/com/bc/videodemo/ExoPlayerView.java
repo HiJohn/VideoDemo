@@ -22,7 +22,12 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.CacheUtil;
+
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ExoPlayerView extends PlayerView {
 
@@ -114,6 +119,7 @@ public class ExoPlayerView extends PlayerView {
     public void buildMediaSource() {
         dataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
 //        DefaultDataSourceFactory defaultDataSourceFactory = VideoApp.getApp().getUpstreamFactory();
+
         mediaSource =
                 new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
         boolean haveStartPosition = startWindow != C.INDEX_UNSET;

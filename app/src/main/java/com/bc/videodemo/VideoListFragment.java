@@ -133,6 +133,10 @@ public class VideoListFragment extends Fragment  {
     };
 
 
+    private void preCacheNext(int position){
+        videoListAdapter.preCacheNext(position);
+    }
+
     private String mVideoName = "";
 
     private void findRetain(){

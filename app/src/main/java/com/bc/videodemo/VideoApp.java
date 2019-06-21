@@ -3,11 +3,13 @@ package com.bc.videodemo;
 import android.app.Application;
 
 import com.google.android.exoplayer2.database.ExoDatabaseProvider;
+import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
@@ -56,6 +58,10 @@ public class VideoApp extends Application {
         }
     }
 
+
+    public SimpleCache getSimpleCache() {
+        return simpleCache;
+    }
 
     public CacheDataSourceFactory getCacheDataSourceFactory() {
         return cacheDataSourceFactory;
