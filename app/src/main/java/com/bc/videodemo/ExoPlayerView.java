@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 
@@ -38,21 +39,26 @@ public class ExoPlayerView extends PlayerView {
     private CacheDataSourceFactory dataSourceFactory;
 
     public ExoPlayerView(Context context) {
-        super(context);
+        this(context,null);
     }
 
     public ExoPlayerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs,0);
     }
 
     public ExoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
-//    private void init(){
+    private void init(){
 //        setControllerShowTimeoutMs(0);
 //        setControllerHideOnTouch(false);
-//    }
+//        setUseController(false);
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
+
+
+    }
 
 
     public void setVideoUri(Uri uri) {

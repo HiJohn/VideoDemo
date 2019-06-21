@@ -8,8 +8,7 @@
 
     <com.bc.videodemo.ExoPlayerView
         android:id="@+id/me_player_view"
-        app:show_timeout="0"
-        app:hide_on_touch="false"
+        app:use_controller="false"
         app:controller_layout_id="@layout/control_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

@@ -1,6 +1,7 @@
 package com.bc.videodemo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ public class MePlayerViewActivity extends AppCompatActivity {
 
     private VideoInfo videoInfo;
 
-//    String uri = "asset:///turkey.mp4";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -2,8 +2,11 @@ package com.bc.videodemo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -60,6 +63,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     private PlayerView playerView;
     private MediaSource mediaSource;
     private VideoInfo videoInfo;
+    private String assetsUri = "";//asset:///turkey.mp4
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +80,14 @@ public class VideoPlayActivity extends AppCompatActivity {
         if (getIntent()!=null){
             videoInfo = getIntent().getParcelableExtra(MeUtils.VIDEO_INFO_TAG);
             if (videoInfo==null){
-                finish();
+                assetsUri = getAssetFile();
+                if (TextUtils.isEmpty(assetsUri)){
+                    finish();
+                }
             }
+
+
+
         }
 
         playerView = findViewById(R.id.act_play_view);
@@ -105,10 +115,27 @@ public class VideoPlayActivity extends AppCompatActivity {
         });
     }
 
+    public String getAssetFile(){
+        try {
+           ActivityInfo activityInfo = getPackageManager().getActivityInfo(getComponentName(),
+                    PackageManager.GET_META_DATA);
+           String uri = activityInfo.metaData.getString("video_uri");
+           return TextUtils.isEmpty(uri)?"":uri;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     private void buildMediaSource(){
         CacheDataSourceFactory dataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
 //        DefaultDataSourceFactory defaultDataSourceFactory = VideoApp.getApp().getUpstreamFactory();
-        Uri uri = Uri.fromFile(new File(videoInfo.path));
+        Uri uri = null;
+        if (videoInfo==null){
+            uri = Uri.parse(assetsUri);
+        }else {
+            uri = Uri.fromFile(new File(videoInfo.path));
+        }
         mediaSource =
                 new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
         boolean haveStartPosition = startWindow != C.INDEX_UNSET;

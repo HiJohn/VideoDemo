@@ -2,6 +2,7 @@ package com.bc.videodemo;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import com.bc.videodemo.databinding.ActivityMainBinding;
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
@@ -24,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
 
-    ViewPager viewPager ;
 
     MePagerAdapter pagerAdapter;
     String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
 
     RetainFragment retainFragment;
+    ActivityMainBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
 
         if (retainFragment==null) {
@@ -49,10 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        viewPager = findViewById(R.id.viewpager);
         pagerAdapter = new MePagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.addOnPageChangeListener(pageChangeListener);
+        binding.viewpager.setAdapter(pagerAdapter);
+        binding.viewpager.addOnPageChangeListener(pageChangeListener);
         checkPermission();
     }
 
@@ -86,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (data.isEmpty()){
+                            binding.emptyview.setVisibility(View.VISIBLE);
+                        }else {
+                            binding.emptyview.setVisibility(View.GONE);
+                        }
                         pagerAdapter.setData(data);
                         pagerAdapter.notifyDataSetChanged();
                     }
