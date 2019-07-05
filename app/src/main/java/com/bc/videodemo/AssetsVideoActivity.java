@@ -11,6 +11,8 @@ import com.bc.videodemo.databinding.ActivityAssetsVideoBinding;
 
 import java.io.File;
 
+import leakcanary.LeakSentry;
+
 public class AssetsVideoActivity extends AppCompatActivity {
     String fileUri = "asset:///turkey.mp4";
 
@@ -41,5 +43,6 @@ public class AssetsVideoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LeakSentry.INSTANCE.getRefWatcher().watch(this);
     }
 }

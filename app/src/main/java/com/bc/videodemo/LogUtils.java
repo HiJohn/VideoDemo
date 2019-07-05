@@ -67,6 +67,9 @@ public class LogUtils {
 
 
     private static void log(int priority, String tag, String msg) {
-        Log.println(priority, "["+tag+"]", msg);
+        if (!tag.equals(TAG)){
+            tag = "{"+TAG+"}==>"+"["+tag+"]";
+        }
+        Log.println(priority, tag, msg);
     }
 }

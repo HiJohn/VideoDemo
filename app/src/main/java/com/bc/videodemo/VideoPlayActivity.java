@@ -22,6 +22,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
@@ -29,6 +30,8 @@ import java.io.File;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+
+import leakcanary.LeakSentry;
 
 public class VideoPlayActivity extends AppCompatActivity {
 
@@ -53,11 +56,10 @@ public class VideoPlayActivity extends AppCompatActivity {
     }
 
 
-
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private TrackSelection.Factory trackSelectionFactory;
     private DefaultRenderersFactory renderersFactory;
-    private  DefaultTrackSelector trackSelector;
+    private DefaultTrackSelector trackSelector;
 
     private SimpleExoPlayer player;
     private PlayerView playerView;
@@ -69,7 +71,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         getWindow()
                 .getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         super.onCreate(savedInstanceState);
         if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
             CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
@@ -77,17 +79,14 @@ public class VideoPlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_play);
 
 
-        if (getIntent()!=null){
+        if (getIntent() != null) {
             videoInfo = getIntent().getParcelableExtra(MeUtils.VIDEO_INFO_TAG);
-            if (videoInfo==null){
+            if (videoInfo == null) {
                 assetsUri = getAssetFile();
-                if (TextUtils.isEmpty(assetsUri)){
+                if (TextUtils.isEmpty(assetsUri)) {
                     finish();
                 }
             }
-
-
-
         }
 
         playerView = findViewById(R.id.act_play_view);
@@ -105,7 +104,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     }
 
 
-    private void initPlayerView(){
+    private void initPlayerView() {
         playerView.setPlayer(player);
         playerView.setPlaybackPreparer(new PlaybackPreparer() {
             @Override
@@ -115,25 +114,25 @@ public class VideoPlayActivity extends AppCompatActivity {
         });
     }
 
-    public String getAssetFile(){
+    public String getAssetFile() {
         try {
-           ActivityInfo activityInfo = getPackageManager().getActivityInfo(getComponentName(),
+            ActivityInfo activityInfo = getPackageManager().getActivityInfo(getComponentName(),
                     PackageManager.GET_META_DATA);
-           String uri = activityInfo.metaData.getString("video_uri");
-           return TextUtils.isEmpty(uri)?"":uri;
+            String uri = activityInfo.metaData.getString("video_uri");
+            return TextUtils.isEmpty(uri) ? "" : uri;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
             return "";
         }
     }
 
-    private void buildMediaSource(){
-        CacheDataSourceFactory dataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
-//        DefaultDataSourceFactory defaultDataSourceFactory = VideoApp.getApp().getUpstreamFactory();
+    private void buildMediaSource() {
+//        CacheDataSourceFactory dataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
+        DefaultDataSourceFactory dataSourceFactory = VideoApp.getApp().getUpstreamFactory();
         Uri uri = null;
-        if (videoInfo==null){
+        if (videoInfo == null) {
             uri = Uri.parse(assetsUri);
-        }else {
+        } else {
             uri = Uri.fromFile(new File(videoInfo.path));
         }
         mediaSource =
@@ -143,7 +142,7 @@ public class VideoPlayActivity extends AppCompatActivity {
             player.seekTo(startWindow, startPosition);
         }
         player.setPlayWhenReady(startAutoPlay);
-        player.prepare(mediaSource,!haveStartPosition, false);
+        player.prepare(mediaSource, !haveStartPosition, false);
     }
 
     @Override
@@ -162,7 +161,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        LogUtils.i(TAG,"onResume ");
+        LogUtils.i(TAG, "onResume ");
         if (Util.SDK_INT <= 23 || player == null) {
             initPlayer();
             if (playerView != null) {
@@ -173,16 +172,16 @@ public class VideoPlayActivity extends AppCompatActivity {
 
 
     private void initPlayer() {
-        if (trackSelectionFactory==null) {
+        if (trackSelectionFactory == null) {
             trackSelectionFactory = new AdaptiveTrackSelection.Factory();
         }
-        if (renderersFactory==null) {
+        if (renderersFactory == null) {
             renderersFactory = new DefaultRenderersFactory(this);
         }
-        if (trackSelector==null) {
+        if (trackSelector == null) {
             trackSelector = new DefaultTrackSelector(trackSelectionFactory);
         }
-        if (trackSelectorParameters==null) {
+        if (trackSelectorParameters == null) {
             trackSelectorParameters =
                     new DefaultTrackSelector.ParametersBuilder().build();
             trackSelector.setParameters(trackSelectorParameters);
@@ -228,7 +227,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         outState.putInt(KEY_WINDOW, startWindow);
         outState.putLong(KEY_POSITION, startPosition);
 
-        LogUtils.i(TAG,"  onSaveInstanceState ");
+        LogUtils.i(TAG, "  onSaveInstanceState ");
 
     }
 
@@ -244,7 +243,7 @@ public class VideoPlayActivity extends AppCompatActivity {
             trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
             clearStartPosition();
         }
-        LogUtils.i(TAG,"  onRestoreInstanceState ");
+        LogUtils.i(TAG, "  onRestoreInstanceState ");
     }
 
     @Override
@@ -273,11 +272,11 @@ public class VideoPlayActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        releasePlayer();
+        LeakSentry.INSTANCE.getRefWatcher().watch(this);
     }
 
-    private void releasePlayer(){
-        if (player!=null) {
+    private void releasePlayer() {
+        if (player != null) {
             updateTrackSelectorParameters();
             updateStartPosition();
             player.release();
@@ -285,4 +284,6 @@ public class VideoPlayActivity extends AppCompatActivity {
             mediaSource = null;
         }
     }
+
+
 }

@@ -3,20 +3,19 @@ package com.bc.videodemo;
 import android.app.Application;
 
 import com.google.android.exoplayer2.database.ExoDatabaseProvider;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
 import java.io.File;
 
-public class VideoApp extends Application {
+import leakcanary.LeakSentry;
 
+public class VideoApp extends Application {
 
     private static VideoApp sApp;
 
@@ -25,6 +24,7 @@ public class VideoApp extends Application {
         super.onCreate();
         sApp = this;
         initDataSource();
+        LeakSentry.INSTANCE.setConfig(LeakSentry.INSTANCE.getConfig().copy(true,true,true,true,2000));
     }
 
     public static VideoApp getApp() {

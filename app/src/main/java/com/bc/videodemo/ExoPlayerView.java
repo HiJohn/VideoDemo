@@ -8,10 +8,8 @@ import android.util.AttributeSet;
 
 import androidx.annotation.Nullable;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -22,12 +20,8 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ExoPlayerView extends PlayerView {
 
@@ -57,11 +51,7 @@ public class ExoPlayerView extends PlayerView {
     }
 
     private void init(){
-//        setControllerShowTimeoutMs(0);
-//        setControllerHideOnTouch(false);
-//        setUseController(false);
         setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
-
 
     }
 
@@ -70,7 +60,11 @@ public class ExoPlayerView extends PlayerView {
         this.uri = uri;
     }
 
-    private void initPlayer() {
+    public void setVideoUri(String filePath) {
+        this.uri = Uri.parse(filePath);
+    }
+
+    public void initPlayer() {
         if (uri == null) {
             LogUtils.i(TAG, " uri is empty ");
             return;
@@ -93,24 +87,8 @@ public class ExoPlayerView extends PlayerView {
 
         if (player == null) {
             player = ExoPlayerFactory.newSimpleInstance(getContext(), renderersFactory, trackSelector);
-//            player.setRepeatMode(Player.REPEAT_MODE_ONE);
-            player.addListener(new Player.EventListener() {
-                @Override
-                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-//                    LogUtils.i(TAG, " play state changed , playwhenready:" + playWhenReady
-//                            + ", playbackstate :" + playbackState);
-                    if (playbackState==Player.STATE_ENDED){
-                        player.seekTo(0,0);
-                        onResume();
-                    }
-                }
-
-                @Override
-                public void onPlayerError(ExoPlaybackException error) {
-                    ToastUtils.showShort("player error :" + error.getMessage());
-                }
-            });
-            player.setPlayWhenReady(startAutoPlay);
+            player.setRepeatMode(Player.REPEAT_MODE_ONE);
+//            player.setPlayWhenReady(startAutoPlay);
         }
         setPlayer(player);
         buildMediaSource();
@@ -130,40 +108,31 @@ public class ExoPlayerView extends PlayerView {
     }
 
 
-    private void releasePlayer() {
+    public void releasePlayer() {
         updateTrackSelectorParameters();
         updateStartPosition();
-        player.release();
-        player = null;
+        if (player!=null) {
+            player.release();
+            player = null;
+        }
+        trackSelector = null;
         mediaSource = null;
     }
 
     //==================================================================================================
-    @Override
-    public void onPause() {
-        super.onPause();
-        releasePlayer();
-        LogUtils.i(TAG, " onPause  ");
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        initPlayer();
-        LogUtils.i(TAG, " onResume  ");
-    }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         LogUtils.i(TAG, " onAttachedToWindow  ");
+        play();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         LogUtils.i(TAG, " onDetachedFromWindow  ");
+        pause();
     }
 
     private void updateStartPosition() {
@@ -183,6 +152,19 @@ public class ExoPlayerView extends PlayerView {
     private void updateTrackSelectorParameters() {
         if (trackSelector != null) {
             trackSelectorParameters = trackSelector.getParameters();
+        }
+    }
+
+    public void pause(){
+        onPause();
+        if (player!=null){
+            player.setPlayWhenReady(false);
+        }
+    }
+    public void play(){
+        onResume();
+        if (player!=null){
+            player.setPlayWhenReady(true);
         }
     }
 

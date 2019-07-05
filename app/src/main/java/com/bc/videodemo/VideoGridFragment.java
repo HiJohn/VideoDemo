@@ -64,9 +64,9 @@ public class VideoGridFragment extends Fragment implements OnGridItemClickListen
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser){
-            findRetain();
-        }
+//        if (isVisibleToUser){
+//            findRetain();
+//        }
     }
 
     private void findRetain(){

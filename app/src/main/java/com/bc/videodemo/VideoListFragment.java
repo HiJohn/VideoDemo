@@ -19,6 +19,8 @@ import com.blankj.utilcode.util.ToastUtils;
 
 import java.util.ArrayList;
 
+import leakcanary.LeakSentry;
+
 public class VideoListFragment extends Fragment  {
 
     public static final String TAG = "VideoListFragment";
@@ -110,18 +112,18 @@ public class VideoListFragment extends Fragment  {
     private OnViewPagerListener pagerListener = new OnViewPagerListener() {
         @Override
         public void onPageRelease(View itemView, boolean isNext, int position) {
-            VideoHolder videoHolder = (VideoHolder) videoRv.getChildViewHolder(itemView);
-            videoHolder.pause();
+//            ExoPlayerView playerView = itemView.findViewById(R.id.player_view);
+//            playerView.pause();
+
         }
 
         @Override
         public void onPageSelected(View itemView, int position, boolean isBottom) {
 
-            VideoHolder videoHolder = (VideoHolder) videoRv.getChildViewHolder(itemView);
-            videoHolder.resume();
-            mVideoName = videoHolder.getVideoName();
+//            ExoPlayerView playerView = itemView.findViewById(R.id.player_view);
+//            playerView.play();
 
-            findRetain();
+//            findRetain();
         }
 
         @Override
@@ -134,7 +136,7 @@ public class VideoListFragment extends Fragment  {
 
 
     private void preCacheNext(int position){
-        videoListAdapter.preCacheNext(position);
+//        videoListAdapter.preCacheNext(position);
     }
 
     private String mVideoName = "";
@@ -159,4 +161,10 @@ public class VideoListFragment extends Fragment  {
 
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LeakSentry.INSTANCE.getRefWatcher().watch(this);
+    }
 }

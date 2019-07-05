@@ -1,7 +1,6 @@
 package com.bc.videodemo;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,13 +8,14 @@ import android.view.WindowManager;
 
 import java.io.File;
 
+import leakcanary.LeakSentry;
+
 public class MePlayerViewActivity extends AppCompatActivity {
 
 
     ExoPlayerView playerView;
 
     private VideoInfo videoInfo;
-
 
 
     @Override
@@ -31,8 +31,8 @@ public class MePlayerViewActivity extends AppCompatActivity {
         }
 
         playerView = findViewById(R.id.me_player_view);
-        Uri uri = Uri.fromFile(new File(videoInfo.path));
-        playerView.setVideoUri(uri);
+        playerView.setVideoUri(videoInfo.path);
+        playerView.initPlayer();
     }
 
 
@@ -40,13 +40,18 @@ public class MePlayerViewActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        playerView.onResume();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        playerView.onPause();
+        playerView.pause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LeakSentry.INSTANCE.getRefWatcher().watch(this);
     }
 }
