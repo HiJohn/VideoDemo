@@ -68,6 +68,18 @@ public class VideoListFragment extends Fragment  {
         pauseOrPlay(false);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        LogUtils.i(TAG,"onDetach ");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        layoutManager.removeAllViews();
+        LogUtils.i(TAG,"onDestroyView ");
+    }
 
     @Override
     public void onResume() {
@@ -112,16 +124,11 @@ public class VideoListFragment extends Fragment  {
     private OnViewPagerListener pagerListener = new OnViewPagerListener() {
         @Override
         public void onPageRelease(View itemView, boolean isNext, int position) {
-//            ExoPlayerView playerView = itemView.findViewById(R.id.player_view);
-//            playerView.pause();
 
         }
 
         @Override
         public void onPageSelected(View itemView, int position, boolean isBottom) {
-
-//            ExoPlayerView playerView = itemView.findViewById(R.id.player_view);
-//            playerView.play();
 
 //            findRetain();
         }
@@ -135,9 +142,7 @@ public class VideoListFragment extends Fragment  {
     };
 
 
-    private void preCacheNext(int position){
-//        videoListAdapter.preCacheNext(position);
-    }
+
 
     private String mVideoName = "";
 

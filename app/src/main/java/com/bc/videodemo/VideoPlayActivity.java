@@ -280,6 +280,7 @@ public class VideoPlayActivity extends AppCompatActivity {
             updateTrackSelectorParameters();
             updateStartPosition();
             player.release();
+            playerView.setPlayer(null);
             player = null;
             mediaSource = null;
         }

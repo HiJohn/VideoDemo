@@ -2,6 +2,7 @@ package com.bc.videodemo;
 
 import android.app.Application;
 
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.database.ExoDatabaseProvider;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -70,5 +71,10 @@ public class VideoApp extends Application {
 
     public DefaultDataSourceFactory getUpstreamFactory(){
         return upstreamFactory;
+    }
+
+
+    public DefaultRenderersFactory buildRenderFactory(){
+        return new DefaultRenderersFactory(this);
     }
 }
