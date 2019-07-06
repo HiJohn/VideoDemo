@@ -5,11 +5,22 @@
     android:background="#F8000000"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.bc.videodemo.ExoPlayerView
+    <!--<com.bc.videodemo.ExoPlayerView-->
+        <!--android:id="@+id/player_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+    <!--</com.bc.videodemo.ExoPlayerView>-->
+
+    <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player_view"
+        app:auto_show="true"
+        app:surface_type="texture_view"
+        app:show_buffering="when_playing"
+        app:resize_mode="fixed_width"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.bc.videodemo.ExoPlayerView>
+    </com.google.android.exoplayer2.ui.PlayerView>
 
 </FrameLayout>

@@ -3,6 +3,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 
+import com.google.android.exoplayer2.ui.PlayerView;
+
 
 /**
  *
@@ -12,9 +14,7 @@ public class VideoHolder extends RecyclerView.ViewHolder {
 
     public static final String TAG = "VideoHolder";
 
-    private ExoPlayerView playerView;
-
-    private VideoInfo videoInfo;
+    public PlayerView playerView;
 
 
     public VideoHolder(View itemView) {
@@ -22,28 +22,4 @@ public class VideoHolder extends RecyclerView.ViewHolder {
         playerView = itemView.findViewById(R.id.player_view);
     }
 
-    public void bind(VideoInfo data) {
-        this.videoInfo = data;
-        playerView.setVideoUri(videoInfo.path);
-        playerView.initPlayer();
-    }
-
-    public void releasePlayer() {
-        playerView.releasePlayer();
-    }
-
-    public void pause() {
-        playerView.pause();
-    }
-
-    public void play() {
-        playerView.play();
-    }
-
-    public String getVideoName(){
-        if (videoInfo!=null){
-            return videoInfo.name;
-        }
-        return "";
-    }
 }

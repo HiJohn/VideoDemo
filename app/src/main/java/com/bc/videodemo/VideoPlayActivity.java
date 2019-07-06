@@ -71,13 +71,12 @@ public class VideoPlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         getWindow()
                 .getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         super.onCreate(savedInstanceState);
         if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
             CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
         }
         setContentView(R.layout.activity_video_play);
-
 
         if (getIntent() != null) {
             videoInfo = getIntent().getParcelableExtra(MeUtils.VIDEO_INFO_TAG);
@@ -127,8 +126,8 @@ public class VideoPlayActivity extends AppCompatActivity {
     }
 
     private void buildMediaSource() {
-//        CacheDataSourceFactory dataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
-        DefaultDataSourceFactory dataSourceFactory = VideoApp.getApp().getUpstreamFactory();
+        CacheDataSourceFactory dataSourceFactory = VideoApp.getApp().getCacheDataSourceFactory();
+//        DefaultDataSourceFactory dataSourceFactory = VideoApp.getApp().getUpstreamFactory();
         Uri uri = null;
         if (videoInfo == null) {
             uri = Uri.parse(assetsUri);

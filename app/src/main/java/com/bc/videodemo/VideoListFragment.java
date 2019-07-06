@@ -1,5 +1,6 @@
 package com.bc.videodemo;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,7 +30,7 @@ public class VideoListFragment extends Fragment  {
 
     private RecyclerView videoRv;
 
-    private VideoListAdapter videoListAdapter = new VideoListAdapter();
+    private VideoListAdapter videoListAdapter ;
 
 
     private ViewPagerLayoutManager layoutManager;
@@ -46,26 +47,11 @@ public class VideoListFragment extends Fragment  {
     }
 
 
-    public void pauseOrPlay(boolean isVisibleToUser) {
-        int po = layoutManager.findLastCompletelyVisibleItemPosition();
-        VideoHolder videoHolder = (VideoHolder) videoRv.findViewHolderForLayoutPosition(po);
-        if (isVisibleToUser) {
-            if (videoHolder != null) {
-                videoHolder.play();
-            }
-        } else {
-            if (videoHolder != null) {
-                videoHolder.pause();
-            }
-        }
-    }
-
-
     @Override
     public void onPause() {
         super.onPause();
         LogUtils.i(TAG,"onPause ");
-        pauseOrPlay(false);
+//        pauseOrPlay(false);
     }
 
     @Override
@@ -76,8 +62,8 @@ public class VideoListFragment extends Fragment  {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         layoutManager.removeAllViews();
+        super.onDestroyView();
         LogUtils.i(TAG,"onDestroyView ");
     }
 
@@ -85,18 +71,18 @@ public class VideoListFragment extends Fragment  {
     public void onResume() {
         super.onResume();
         LogUtils.i(TAG,"onResume ");
-        if (getUserVisibleHint()) {
-            pauseOrPlay(true);
-        }
+//        if (getUserVisibleHint()) {
+//            pauseOrPlay(true);
+//        }
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         LogUtils.i(TAG," setUserVisibleHint: "+isVisibleToUser);
-        if (layoutManager!=null){
-            pauseOrPlay(isVisibleToUser);
-        }
+//        if (layoutManager!=null){
+//            pauseOrPlay(isVisibleToUser);
+//        }
     }
 
     @Override
@@ -115,28 +101,54 @@ public class VideoListFragment extends Fragment  {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video_list, container, false);
         videoRv = view.findViewById(R.id.video_rv);
+        videoListAdapter = new VideoListAdapter(getContext());
         videoRv.setLayoutManager(layoutManager);
         videoRv.setAdapter(videoListAdapter);
+        videoRv.setItemViewCacheSize(5);
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loadData();
+    }
+
+    private void loadData(){
+        if (getActivity()==null){
+            return;
+        }
+        Activity activity = getActivity();
+        AsyncHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final ArrayList<VideoInfo> data = MeUtils.queryVideoInfo(activity);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        videoListAdapter.setData(data);
+                        videoListAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+    }
 
     private OnViewPagerListener pagerListener = new OnViewPagerListener() {
         @Override
         public void onPageRelease(View itemView, boolean isNext, int position) {
-
+            videoListAdapter.resetMedia();
         }
 
         @Override
         public void onPageSelected(View itemView, int position, boolean isBottom) {
-
+            videoListAdapter.rebuildMediaSourceByPosition(position);
 //            findRetain();
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
             if (state == ViewPager.SCROLL_STATE_IDLE) {
-
             }
         }
     };
