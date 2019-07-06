@@ -15,6 +15,8 @@ public class ContainerActivity extends AppCompatActivity {
 
     VideoSingleFragment fragment;
 
+    VerticalVideoFragment videoFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -23,6 +25,7 @@ public class ContainerActivity extends AppCompatActivity {
 
 
         init();
+//        init2();
     }
 
     private void init(){
@@ -44,4 +47,13 @@ public class ContainerActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.root_container,fragment).commit();
 
     }
+
+
+    private void init2(){
+        videoFragment = new VerticalVideoFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.root_container,videoFragment).commit();
+
+    }
+
+
 }

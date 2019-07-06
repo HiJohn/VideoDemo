@@ -171,6 +171,11 @@ public class VideoSingleFragment extends Fragment {
             trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
             clearStartPosition();
         }
+
+
+        if (getArguments()!=null){
+            videoInfo = getArguments().getParcelable(MeUtils.VIDEO_INFO_TAG);
+        }
     }
 
 

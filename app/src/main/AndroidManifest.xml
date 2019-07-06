@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ContainerActivity"
+        <activity
+            android:name=".ContainerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreenWithStatusBar">
@@ -51,9 +52,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/FullScreenWithStatusBar">
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
 
             <meta-data
@@ -67,10 +68,10 @@
             android:theme="@style/FullScreenWithStatusBar">
             <intent-filter>
 
-                <!-- <action android:name="android.intent.action.MAIN" /> -->
+                <!--<action android:name="android.intent.action.MAIN" />-->
                 <action android:name="android.intent.action.VIEW" />
 
-                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
         </activity>
     </application>
